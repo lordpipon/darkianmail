@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import ScrollText from 'lucide-svelte/icons/scroll-text';
 import { Button } from '$lib/components/ui/button';
-import { ArrowLeft, Home } from 'lucide-svelte';
+import { Home } from 'lucide-svelte';
 import { page } from '$app/state';
 
 	const LAST_UPDATED = 'September 9, 2026';
@@ -133,12 +133,6 @@ import { page } from '$app/state';
 				</p>
 			</section>
 
-			<div class="mt-8 flex justify-center">
-				<Button href="/" variant="outline" class="gap-2">
-					<ArrowLeft class="h-4 w-4" />
-					Back to Home
-				</Button>
-			</div>
 		</div>
 	</Card.Root>
 </div>

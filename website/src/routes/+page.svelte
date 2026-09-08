@@ -245,8 +245,7 @@
 		</span>
 	</h1>
 	<p class="text-muted-foreground mb-12 mt-6 max-w-2xl text-xl">
-		Run your own email server, control your data, and join a network of self-hosted instances. Built
-		for privacy, simplicity and giggles.
+		Darkian Mail, an email service built for you. Fast and reliable.
 	</p>
 
 	<div class="flex flex-col items-center gap-6">

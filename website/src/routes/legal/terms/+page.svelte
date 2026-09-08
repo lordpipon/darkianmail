@@ -4,7 +4,7 @@
 import FileText from 'lucide-svelte/icons/file-text';
 import { goto } from '$app/navigation';
 import { Button } from '$lib/components/ui/button';
-import { ArrowLeft, Home } from 'lucide-svelte';
+import { Home } from 'lucide-svelte';
 import { page } from '$app/state';
 
 	const LAST_UPDATED = 'May 5, 2025';
@@ -211,11 +211,7 @@ import { page } from '$app/state';
 
 		<Separator class="my-8" />
 
-		<div class="flex flex-wrap justify-center gap-3">
-			<Button variant="outline" size="lg" onclick={() => goto('/')} class="gap-2">
-				<ArrowLeft class="h-4 w-4" />
-				Back to Home
-			</Button>
+		<div class="flex justify-center">
 			<Button variant="outline" size="lg" onclick={() => goto('/legal/privacy')}>
 				Read our Privacy Policy →
 			</Button>

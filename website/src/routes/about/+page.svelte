@@ -2,7 +2,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
-	import { Mail, Github, Globe, AtSign, ArrowLeft, Home } from 'lucide-svelte';
+	import { Mail, Github, Globe, AtSign, Home } from 'lucide-svelte';
 	import { page } from '$app/state';
 </script>
 
@@ -100,13 +100,6 @@
 					</a>
 				</div>
 			</section>
-
-			<div class="mt-8 flex justify-center">
-				<Button href="/" variant="outline" class="gap-2">
-					<ArrowLeft class="h-4 w-4" />
-					Back to Home
-				</Button>
-			</div>
 		</div>
 	</Card.Root>
 </div>

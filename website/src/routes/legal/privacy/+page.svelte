@@ -4,7 +4,7 @@
 	import * as Card from '$lib/components/ui/card';
 import ShieldCheck from 'lucide-svelte/icons/shield-check';
 import { goto } from '$app/navigation';
-import { ArrowLeft, Home } from 'lucide-svelte';
+import { Home } from 'lucide-svelte';
 import { page } from '$app/state';
 
 	const LAST_UPDATED = 'May 5, 2025';
@@ -215,11 +215,7 @@ import { page } from '$app/state';
 
 		<Separator class="my-8" />
 
-		<div class="flex flex-wrap justify-center gap-3">
-			<Button variant="outline" size="lg" onclick={() => goto('/')} class="gap-2">
-				<ArrowLeft class="h-4 w-4" />
-				Back to Home
-			</Button>
+		<div class="flex justify-center">
 			<Button variant="outline" size="lg" onclick={() => goto('/legal/terms')}>
 				Read our Terms of Service →
 			</Button>

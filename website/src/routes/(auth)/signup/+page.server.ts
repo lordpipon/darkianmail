@@ -52,6 +52,19 @@ export const actions: Actions = {
                 return fail(409, { error: 'Username already taken', username });
             }
 
+            if (ip) {
+                const ipAccounts = await sql`
+                    SELECT id FROM users
+                    WHERE ip = ${ip} AND deleted_at IS NULL
+                `;
+                if (ipAccounts.length > 0) {
+                    return fail(409, {
+                        error: 'Only one account is allowed per IP address.',
+                        username
+                    });
+                }
+            }
+
             const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
             const [newUser] = await sql`
                 INSERT INTO users (username, password_hash, domain, ip, user_agent)

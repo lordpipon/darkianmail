@@ -17,7 +17,10 @@
 		PenSquare,
 		Settings,
 		ShieldAlert,
-		FileText
+		FileText,
+		ShieldCheck,
+		ScrollText,
+		LogOut
 	} from 'lucide-svelte';
 	import { mode, setMode } from 'mode-watcher';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -26,7 +29,8 @@
 	import ComposeEmail from '$lib/components/self/ComposeEmail.svelte';
 	import StorageUsageBar from './StorageUsageBar.svelte';
 	import { USER_DATA } from '$lib/stores/user';
-	import { useSidebar } from '$lib/components/ui/sidebar/index.js'; // Import the hook
+	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+	import { goto } from '$app/navigation';
 
 	const data = {
 		navMain: [
@@ -41,7 +45,10 @@
 			{ title: 'Contacts', url: '/contacts', icon: UsersRound },
 			{ title: 'Scheduled', url: '/scheduled', icon: ClockFading },
 			{ title: 'Spam', url: '/spam', icon: CircleAlert },
-			{ title: 'Settings', url: '/settings', icon: Settings }
+			{ title: 'Settings', url: '/settings', icon: Settings },
+			{ title: 'Terms of Service', url: '/legal/terms', icon: FileText },
+			{ title: 'Privacy Policy', url: '/legal/privacy', icon: ShieldCheck },
+			{ title: 'Rules', url: '/legal/rules', icon: ScrollText }
 		],
 		navAdmin: [{ title: 'Admin', url: '/admin', icon: ShieldAlert }]
 	};
@@ -66,6 +73,11 @@
 		setMode(mode.current === 'light' ? 'dark' : 'light');
 		setOpenMobile(false);
 	}
+
+	async function handleLogout() {
+		await fetch('/api/users/logout', { method: 'POST' });
+		goto('/login');
+	}
 </script>
 
 <ComposeEmail bind:isOpen={showCompose} />
@@ -80,6 +92,16 @@
 					<span class="text-muted-foreground text-xs">| Admin</span>
 				{/if}
 			</div>
+			<Button
+				variant="ghost"
+				size="icon"
+				class="ml-auto h-8 w-8"
+				onclick={handleLogout}
+				title="Log out"
+				aria-label="Log out"
+			>
+				<LogOut class="h-4 w-4" />
+			</Button>
 		</div>
 	</Sidebar.Header>
 
