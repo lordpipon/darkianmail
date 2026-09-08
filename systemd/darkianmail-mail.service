@@ -1,0 +1,20 @@
+# Install: sudo cp systemd/*.service /etc/systemd/system/ && sudo systemctl daemon-reload
+# (adjust User=/ExecStart paths if your user or repo path differs)
+
+[Unit]
+Description=DarkianMail mail server (SMTP + inbound webhook + delivery worker)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lordpipon
+Group=lordpipon
+WorkingDirectory=/home/lordpipon/DarkianMail/server
+EnvironmentFile=/home/lordpipon/DarkianMail/.env
+ExecStart=/usr/bin/node --import tsx /home/lordpipon/DarkianMail/server/src/index.ts
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

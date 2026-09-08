@@ -1,0 +1,8 @@
+name = "darkianmail-ingest"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+INGEST_URL = "https://ingest.darkian.xyz/inbound"
+# INGEST_TOKEN is a secret: set it with `wrangler secret put INGEST_TOKEN`
+# (value must match SMTP_WEBHOOK_TOKEN in the server's .env)

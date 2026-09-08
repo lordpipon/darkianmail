@@ -1,0 +1,19 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# deps & build
+node_modules/
+dist/
+build/
+.svelte-kit/
+.vite/
+
+# logs & tmp
+*.log
+/tmp/
+.DS_Store
+
+# test artifacts
+server/*.mjs

@@ -1,0 +1,20 @@
+# Cloudflare tunnel ingress config for DarkianMail.
+# Place at ~/.cloudflared/config.yml after `cloudflared tunnel login` +
+# `cloudflared tunnel create darkianmail`; then:
+#   cloudflared tunnel route dns darkianmail mail.darkian.xyz
+#   cloudflared tunnel run darkianmail
+
+tunnel: darkianmail
+credentials-file: /home/lordpipon/.cloudflared/darkianmail.json
+
+ingress:
+  # Web UI (optional subdomain)
+  - hostname: darkianmail.darkian.xyz
+    service: http://127.0.0.1:4173
+
+  # Inbound mail webhook (Cloudflare Email Worker -> here)
+  - hostname: mail.darkian.xyz
+    service: http://127.0.0.1:8080
+
+  # Catch-all: refuse anything else
+  - service: http_status:404

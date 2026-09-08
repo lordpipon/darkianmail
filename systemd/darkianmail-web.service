@@ -1,0 +1,18 @@
+[Unit]
+Description=DarkianMail web UI (SvelteKit adapter-node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lordpipon
+Group=lordpipon
+WorkingDirectory=/home/lordpipon/DarkianMail/website
+EnvironmentFile=/home/lordpipon/DarkianMail/website/.env
+Environment=PORT=4173
+ExecStart=/usr/bin/node /home/lordpipon/DarkianMail/website/build/index.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

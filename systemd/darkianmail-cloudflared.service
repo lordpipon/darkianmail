@@ -1,0 +1,18 @@
+# cloudflared tunnel -> DarkianMail
+# After the named tunnel exists (~/.cloudflared/config.yml), enable this unit:
+#   sudo cp systemd/darkianmail-cloudflared.service /etc/systemd/system/ \
+#     && sudo systemctl enable --now darkianmail-cloudflared
+
+[Unit]
+Description=Cloudflare Tunnel (darkianmail)
+After=network-online.target darkianmail-mail.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/cloudflared tunnel --config /home/lordpipon/.cloudflared/config.yml run darkianmail
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
