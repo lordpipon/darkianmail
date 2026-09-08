@@ -51,6 +51,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const toAddress = to.trim().toLowerCase();
     const toDomain = toAddress.split('@')[1];
 
+    const isBrandedRecipient = toDomain.toLowerCase() === PUBLIC_DOMAIN.toLowerCase();
+    if (!isBrandedRecipient && (expires_at || self_destruct)) {
+        return json({
+            status: 'error',
+            message: `Expiration and self-destruct are only available for @${PUBLIC_DOMAIN} recipients.`
+        }, { status: 400 });
+    }
+
     if (!subject && !body && !html_body && attachments.length === 0) {
         return json({ status: 'error', message: 'Message is empty.' }, { status: 400 });
     }

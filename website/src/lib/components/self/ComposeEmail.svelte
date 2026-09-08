@@ -51,6 +51,22 @@
 	let expiresLabel = $state<string | null>(null);
 	let isBombEmail = $state(false);
 
+	const isBrandedOnly = $derived(
+		!!to &&
+			to
+				.split(',')
+				.map((a) => a.trim().toLowerCase())
+				.every((a) => !!a && a.endsWith('@' + PUBLIC_DOMAIN.toLowerCase()))
+	);
+
+	$effect(() => {
+		if (!isBrandedOnly) {
+			expiresAt = null;
+			expiresLabel = null;
+			isBombEmail = false;
+		}
+	});
+
 	$effect(() => {
 		if (initialDraft) {
 			to = initialDraft.to_address || '';
@@ -298,12 +314,16 @@
 					<div class="space-y-0.5">
 						<Label class="text-sm font-medium">Email Expiration</Label>
 						<p class="text-muted-foreground text-xs">
-							Email will be automatically deleted after this date
+							{#if isBrandedOnly}
+								Email will be automatically deleted after this date
+							{:else}
+								Only available for @{PUBLIC_DOMAIN} recipients
+							{/if}
 						</p>
 					</div>
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger disabled={isBombEmail}>
-							<Button variant="outline" size="sm" disabled={isBombEmail}>
+						<DropdownMenu.Trigger disabled={isBombEmail || !isBrandedOnly}>
+							<Button variant="outline" size="sm" disabled={isBombEmail || !isBrandedOnly}>
 								<Timer class="h-4 w-4" />
 								{expiresLabel ? `Expires in ${expiresLabel}` : 'Set expiry'}
 							</Button>
@@ -341,7 +361,11 @@
 					<div class="space-y-0.5">
 						<Label class="text-sm font-medium">Self-destruct after reading</Label>
 						<p class="text-muted-foreground text-xs">
-							Email will be deleted once opened by recipient
+							{#if isBrandedOnly}
+								Email will be deleted once opened by recipient
+							{:else}
+								Only available for @{PUBLIC_DOMAIN} recipients
+							{/if}
 						</p>
 					</div>
 					<Switch
@@ -353,7 +377,7 @@
 								expiresLabel = null;
 							}
 						}}
-						disabled={!!expiresAt}
+						disabled={!!expiresAt || !isBrandedOnly}
 					/>
 				</div>
 			</div>
