@@ -21,6 +21,8 @@
 	import DomainInput from '$lib/components/self/DomainInput.svelte';
 	import { PUBLIC_DOMAIN } from '$env/static/public';
 	import { goto } from '$app/navigation';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Menu } from 'lucide-svelte';
 
 	const features = [
 		{
@@ -167,12 +169,12 @@
 <nav
 	class="bg-background/80 fixed left-1/2 top-2 z-50 flex -translate-x-1/2 items-center justify-between rounded-full border px-3 py-1.5 shadow-lg backdrop-blur-lg sm:px-4 sm:py-2 md:px-6 md:py-3"
 >
-	<div class="mr-6 md:mr-0 flex items-center gap-1.5 sm:gap-2">
-		<img src="/logo.png" alt="Darkian Mail Logo" class="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16" />
-		<span class="text-xs font-semibold sm:text-sm md:text-base">Darkian Mail</span>
+	<div class="mr-2 flex items-center gap-1.5 sm:mr-4 sm:gap-2 md:mr-0">
+		<img src="/logo.png" alt="Darkian Mail Logo" class="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14" />
+		<span class="hidden text-xs font-semibold sm:block sm:text-sm md:text-base">Darkian Mail</span>
 	</div>
 
-	<div class="mx-2 mr-6 flex items-center gap-3 md:mx-6 md:gap-6">
+	<div class="mx-2 mr-6 hidden items-center gap-3 md:mx-6 md:flex md:gap-6">
 		<a
 			href="/about"
 			class="text-muted-foreground hover:text-primary text-xs transition-colors sm:text-sm md:text-base"
@@ -229,6 +231,23 @@
 				>Login</Button
 			>
 		{/if}
+
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger
+				class="data-[state=open]:bg-accent bg-transparent md:hidden"
+				aria-label="Menu"
+			>
+				<Menu class="h-5 w-5" />
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="end" class="w-48">
+				<DropdownMenu.Item onclick={() => goto('/about')}>About</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => goto('/legal/terms')}
+					>Terms of Service</DropdownMenu.Item
+				>
+				<DropdownMenu.Item onclick={() => goto('/legal/privacy')}>Privacy Policy</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => goto('/legal/rules')}>Rules</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	</div>
 </nav>
 

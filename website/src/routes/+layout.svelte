@@ -232,7 +232,7 @@
 						<div class="flex w-full items-center gap-4 px-4 lg:px-6">
 							<Sidebar.Trigger class="-ml-1" />
 
-							<h1 class="mr-6 text-base font-medium">{$currentTab}</h1>
+							<h1 class="mr-6 hidden text-base font-medium sm:block">{$currentTab}</h1>
 
 							{#if isEmailRoute}
 								<div class="flex-1">
