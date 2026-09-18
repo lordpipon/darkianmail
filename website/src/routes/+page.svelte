@@ -174,25 +174,25 @@
 		<span class="hidden text-xs font-semibold sm:block sm:text-sm md:text-base">Darkian Mail</span>
 	</div>
 
-	<div class="mx-2 mr-6 hidden items-center gap-3 md:mx-6 md:flex md:gap-6">
+	<div class="mx-2 mr-2 hidden items-center gap-1 md:flex md:mr-6">
 		<a
 			href="/about"
-			class="text-muted-foreground hover:text-primary text-xs transition-colors sm:text-sm md:text-base"
+			class="hover:bg-accent hover:text-primary rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
 			>About</a
 		>
 		<a
 			href="/legal/terms"
-			class="text-muted-foreground hover:text-primary text-xs transition-colors sm:text-sm md:text-base"
+			class="hover:bg-accent hover:text-primary rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
 			>Terms of Service</a
 		>
 		<a
 			href="/legal/privacy"
-			class="text-muted-foreground hover:text-primary text-xs transition-colors sm:text-sm md:text-base"
+			class="hover:bg-accent hover:text-primary rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
 			>Privacy Policy</a
 		>
 		<a
 			href="/legal/rules"
-			class="text-muted-foreground hover:text-primary text-xs transition-colors sm:text-sm md:text-base"
+			class="hover:bg-accent hover:text-primary rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
 			>Rules</a
 		>
 	</div>
@@ -252,9 +252,9 @@
 </nav>
 
 <div
-	class="from-background to-primary/5 flex min-h-screen flex-col items-center justify-center bg-gradient-to-b p-8 pt-48 text-center"
+	class="from-background to-primary/5 flex min-h-screen flex-col items-center justify-center bg-gradient-to-b p-8 pt-36 text-center sm:pt-44"
 >
-	<h1 class="text-6xl font-bold">
+	<h1 class="text-4xl font-bold sm:text-5xl md:text-6xl">
 		Free Email Service
 		<span class="relative mx-2 inline-block">
 			<span

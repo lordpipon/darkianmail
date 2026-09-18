@@ -14,15 +14,16 @@ export type ActionData = {
 export const actions: Actions = {
     default: async ({ request, cookies, getClientAddress, request: { headers } }) => {
         const data = await request.formData();
-        const username = data.get('username')?.toString()?.toLowerCase();
+        const enteredUsername = data.get('username')?.toString()?.toLowerCase();
+        const username = enteredUsername?.split('@')[0];
         const password = data.get('password');
 
         if (!username || typeof username !== 'string' || !password || typeof password !== 'string') {
-            return fail(400, { success: false, error: 'Invalid input.', username: username?.toString() });
+            return fail(400, { success: false, error: 'Invalid input.', username: enteredUsername });
         }
 
         if (!validateUsername(username)) {
-            return fail(400, { success: false, error: 'Invalid username format.', username });
+            return fail(400, { success: false, error: 'Invalid username format.', username: enteredUsername });
         }
 
         try {
@@ -35,21 +36,21 @@ export const actions: Actions = {
             const user = users[0];
 
             if (!user) {
-                return fail(400, { success: false, error: 'Invalid username or password.', username });
+                return fail(400, { success: false, error: 'Invalid username or password.', username: enteredUsername });
             }
 
             if (user.is_banned) {
-                return fail(403, { success: false, error: 'Your account is banned.', username });
+                return fail(403, { success: false, error: 'Your account is banned.', username: enteredUsername });
             }
 
             if (user.password_hash === 'DELETED_ACCOUNT') {
-                return fail(400, { success: false, error: 'Invalid username or password.', username });
+                return fail(400, { success: false, error: 'Invalid username or password.', username: enteredUsername });
             }
 
             const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
             if (!passwordMatch) {
-                return fail(400, { success: false, error: 'Invalid username or password.', username });
+                return fail(400, { success: false, error: 'Invalid username or password.', username: enteredUsername });
             }
 
             const { token, code } = await createAuthJWT({ userId: user.id });
@@ -78,9 +79,9 @@ export const actions: Actions = {
             console.error('Login error:', error);
 
             if (error.message === 'User is banned and cannot create a new token.') {
-                return fail(403, { success: false, error: 'Your account is banned.', username });
+                return fail(403, { success: false, error: 'Your account is banned.', username: enteredUsername });
             }
-            return fail(500, { success: false, error: 'Internal server error. Please try again later.', username });
+            return fail(500, { success: false, error: 'Internal server error. Please try again later.', username: enteredUsername });
         }
     }
 };

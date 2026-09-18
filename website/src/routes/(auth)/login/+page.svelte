@@ -57,7 +57,7 @@
 
                 <div class="grid gap-4">
                     <div class="grid gap-2">
-                        <Label for="username">Username</Label>
+                        <Label for="username">Username or email</Label>
                         <Input
                             id="username"
                             name="username"
@@ -65,6 +65,7 @@
                             required
                             disabled={isSubmitting}
                             autocomplete="username"
+                            placeholder="username or user@darkian.xyz"
                         />
                     </div>
                     <div class="grid gap-2">
