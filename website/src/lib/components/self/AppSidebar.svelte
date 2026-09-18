@@ -34,7 +34,6 @@
 
 	const data = {
 		navMain: [
-			{ title: 'Home', url: '/', icon: Home },
 			{ title: 'Inbox', url: '/inbox', icon: Inbox },
 			{ title: 'Starred', url: '/starred', icon: Star },
 			{ title: 'Snoozed', url: '/snoozed', icon: Clock },
@@ -84,9 +83,9 @@
 
 <Sidebar.Root collapsible="offcanvas" variant="inset">
 	<Sidebar.Header>
-		<div class="flex items-center gap-1 px-2 py-2">
-			<img src="/logo.png" class="h-8 w-8" alt="darkianmail" />
-			<div class="flex items-center gap-2">
+		<div class="flex items-center gap-1 whitespace-nowrap px-2 py-2">
+			<img src="/logo.png" class="h-8 w-8 shrink-0" alt="darkianmail" />
+			<div class="flex min-w-0 items-center gap-1">
 				<span class="text-base font-semibold">Darkian Mail</span>
 				{#if $USER_DATA?.is_admin}
 					<span class="text-muted-foreground text-xs">| Admin</span>
@@ -95,7 +94,7 @@
 			<Button
 				variant="ghost"
 				size="icon"
-				class="ml-auto h-8 w-8"
+				class="ml-auto h-8 w-8 shrink-0"
 				onclick={handleLogout}
 				title="Log out"
 				aria-label="Log out"
@@ -212,6 +211,21 @@
 										<span>Light Mode</span>
 									{/if}
 								</button>
+							{/snippet}
+						</Sidebar.MenuButton>
+					</Sidebar.MenuItem>
+
+					<Sidebar.MenuItem>
+						<Sidebar.MenuButton>
+							{#snippet child({ props }: { props: MenuButtonProps })}
+								<a
+									href="/"
+									onclick={() => handleNavClick('Home')}
+									class={`${$currentTab === 'Home' ? 'bg-accent text-accent-foreground' : ''} ${props.class}`}
+								>
+									<Home />
+									<span>Home</span>
+								</a>
 							{/snippet}
 						</Sidebar.MenuButton>
 					</Sidebar.MenuItem>

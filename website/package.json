@@ -49,6 +49,7 @@
 		"jose": "^6.0.10",
 		"lucide-svelte": "^0.503.0",
 		"nanoid": "^5.1.5",
+		"nodemailer": "^10.0.10",
 		"postgres": "^3.4.5"
 	},
 	"optionalDependencies": {

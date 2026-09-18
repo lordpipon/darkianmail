@@ -7,6 +7,8 @@ DROP TABLE IF EXISTS user_settings;
 DROP TABLE IF EXISTS used_hashcash_tokens;
 DROP TABLE IF EXISTS emails;
 DROP TABLE IF EXISTS user_secret_codes;
+DROP TABLE IF EXISTS google_links;
+DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS users;
 
 DROP TYPE IF EXISTS email_status;
@@ -41,6 +43,7 @@ CREATE TABLE
         is_admin BOOLEAN DEFAULT FALSE,
         ip VARCHAR(48),
         user_agent TEXT,
+        recovery_email VARCHAR(255),
         deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
@@ -200,3 +203,22 @@ CREATE TABLE user_settings (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE google_links (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    google_sub VARCHAR(255) NOT NULL UNIQUE,
+    google_email VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_google_links_sub ON google_links(google_sub);
+
+CREATE TABLE password_reset_tokens (
+    code VARCHAR(64) PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX idx_password_reset_user ON password_reset_tokens(user_id);

@@ -16,7 +16,7 @@
 		lastSearchedQuery,
 		clearSearch
 	} from '$lib/stores/searchStore';
-	import { Search } from 'lucide-svelte';
+	import { Search, RefreshCw } from 'lucide-svelte';
 	import { debounce } from '$lib/utils';
 	import { isOffline } from '$lib/stores/network';
 	import { toast } from 'svelte-sonner';
@@ -131,6 +131,22 @@
 	}
 
 	let isFirstPoll = $state(true);
+	let refreshing = $state(false);
+
+	async function handleRefresh() {
+		if (refreshing) return;
+		refreshing = true;
+		try {
+			clearSearch();
+			await invalidateAll();
+			toast.success('Inbox refreshed');
+		} catch (e) {
+			console.error('Refresh error:', e);
+			toast.error('Failed to refresh. Check your connection.');
+		} finally {
+			refreshing = false;
+		}
+	}
 
 	async function pollForNewEmails() {
 		if (!browser || $isOffline || !$USER_DATA || !page.data.user || $isPolling) return;
@@ -244,6 +260,18 @@
 										class="h-8 w-full"
 									/>
 								</div>
+
+								<Button
+									variant="ghost"
+									size="icon"
+									class="h-8 w-8 shrink-0"
+									onclick={handleRefresh}
+									disabled={refreshing}
+									title="Refresh"
+									aria-label="Refresh"
+								>
+									<RefreshCw class={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+								</Button>
 
 								<div class="hidden md:block">
 									<EmailClassificationButtons />

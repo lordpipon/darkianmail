@@ -57,6 +57,7 @@
 
 	let attachmentComponent: Attachment | null = $state(null);
 	let isSending = $state(false);
+	let localReplies: Email[] = [];
 
 	const sanitizeConfig: Config = {
 		ALLOWED_TAGS: [...ALLOWED_HTML_TAGS],
@@ -120,6 +121,12 @@
 				const sortedEmails = emails.sort(
 					(a: Email, b: Email) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
 				);
+
+				for (const local of localReplies) {
+					if (!sortedEmails.some((e: Email) => e.id === local.id)) {
+						sortedEmails.push(local);
+					}
+				}
 				threadEmails = sortedEmails;
 
 				const initialEmailIndex = sortedEmails.findIndex((e: Email) => e.id === email.id);
@@ -242,6 +249,7 @@
 				};
 
 				threadEmails = [...threadEmails, newEmail];
+				localReplies = [...localReplies, newEmail];
 				expandedEmails = new Set([...expandedEmails, tempId]);
 				isReplying = false;
 				replyText = '';
@@ -355,6 +363,7 @@
 		isReplying = false;
 		replyRecipient = '';
 		replyText = '';
+		localReplies = [];
 	});
 
 	function handleFilesChange(
