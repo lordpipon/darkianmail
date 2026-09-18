@@ -84,18 +84,28 @@ export async function storeInboundEmail(data: {
 
     const classification = classifyEmail(data.subject, data.body, data.html_body);
 
+    let resolvedThreadId: number | null = null;
+    if (data.in_reply_to) {
+        const parent = await sql`
+            SELECT thread_id, id FROM emails WHERE message_id = ${data.in_reply_to} LIMIT 1
+        `;
+        if (parent.length > 0) {
+            resolvedThreadId = parent[0].thread_id ?? parent[0].id;
+        }
+    }
+
     const [row] = await sql`
         INSERT INTO emails (
             from_address, from_domain, to_address, to_domain,
             subject, body, content_type, html_body,
             message_id, in_reply_to, "references",
-            sent_at, status, classification
+            sent_at, status, classification, thread_id
         )
         VALUES (
             ${data.from}, ${from.domain}, ${data.to}, ${to.domain},
             ${data.subject}, ${data.body}, ${data.content_type}, ${data.html_body},
             ${data.message_id ?? null}, ${data.in_reply_to ?? null}, ${data.references ?? null},
-            NOW(), 'sent', ${classification}
+            NOW(), 'sent', ${classification}, ${resolvedThreadId}
         )
         RETURNING id
     `;

@@ -11,6 +11,7 @@ export function requireAuth(event: RequestEvent) {
 export function checkAuth(event: RequestEvent) {
     const isPublicRoute = event.route.id === '/' || 
                          event.route.id?.startsWith('/(auth)') ||
+                         event.route.id?.startsWith('/auth') ||
                          event.route.id?.startsWith('/legal');
     
     if (!isPublicRoute) {

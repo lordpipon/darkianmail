@@ -11,8 +11,23 @@
 	import { debounce, validateUsername } from '$lib/utils';
 	import { PUBLIC_DOMAIN } from '$env/static/public';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	let { form }: { form: ActionData } = $props();
+
+	let googleEnabled = $state(false);
+
+	onMount(async () => {
+		try {
+			const res = await fetch('/auth/google/status').catch(() => null);
+			if (res?.ok) {
+				const data = await res.json();
+				googleEnabled = !!data.enabled;
+			}
+		} catch (e) {
+			// ignore, hide Google button
+		}
+	});
 
 	let initialUsername = $page.url.searchParams.get('username') || '';
 	let username = $state(initialUsername);
@@ -170,6 +185,20 @@
 						<Button type="submit" class="w-full" disabled={isSubmitting}>
 							{isSubmitting ? 'Creating Account...' : 'Create Account'}
 						</Button>
+
+						{#if googleEnabled}
+							<div class="relative">
+								<div class="absolute inset-0 flex items-center">
+									<span class="w-full border-t" />
+								</div>
+								<div class="relative flex justify-center text-xs uppercase">
+									<span class="bg-background text-muted-foreground px-2">or</span>
+								</div>
+							</div>
+							<Button href="/auth/google/login" variant="outline" class="w-full">
+								Continue with Google
+							</Button>
+						{/if}
 						<div class="text-center text-xs">
 							By signing up, you agree to our{' '}
 							<a href="/legal/privacy" class="text-primary hover:underline">Privacy Policy</a>

@@ -10,7 +10,7 @@
 	import { USER_DATA } from '$lib/stores/user';
 	import { Progress } from '$lib/components/ui/progress';
 	import { Download, Trash2, LogOut } from 'lucide-svelte';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	let notificationsEnabled = $state(false);
@@ -21,6 +21,87 @@
 	let newPassword = $state('');
 	let confirmPassword = $state('');
 	let passwordSubmitting = $state(false);
+
+	let recoveryEmail = $state('');
+	let recoveryLoading = $state(true);
+	let recoverySaving = $state(false);
+	let googleEnabled = $state(false);
+	let googleLinked = $state(false);
+	let googleEmail = $state('');
+
+	onMount(async () => {
+		try {
+			const res = await fetch('/api/settings/recovery');
+			if (res.ok) {
+				const data = await res.json();
+				recoveryEmail = data.recovery_email ?? '';
+				googleLinked = !!data.google_linked;
+				googleEmail = data.google_email ?? '';
+			}
+		} catch (e) {
+			// ignore
+		} finally {
+			recoveryLoading = false;
+		}
+
+		try {
+			const gres = await fetch('/auth/google/status');
+			if (gres.ok) {
+				const gdata = await gres.json();
+				googleEnabled = !!gdata.enabled;
+			}
+		} catch (e) {
+			// ignore
+		}
+	});
+
+	async function handleSaveRecovery() {
+		const email = recoveryEmail.trim();
+		if (!email) {
+			toast.error('Enter a recovery email address.');
+			return;
+		}
+		recoverySaving = true;
+		try {
+			const res = await fetch('/api/settings/recovery', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email })
+			});
+			if (!res.ok) {
+				let message = 'Failed to save recovery email';
+				try {
+					const data = await res.json();
+					if (data.message) message = data.message;
+				} catch (e) {
+					// ignore
+				}
+				toast.error(message);
+				return;
+			}
+			toast.success('Recovery email saved');
+		} catch (e) {
+			toast.error('Failed to save recovery email');
+		} finally {
+			recoverySaving = false;
+		}
+	}
+
+	async function handleUnlinkGoogle() {
+		if (!confirm('Unlink this Google account? You can still sign in with your Darkian Mail password.')) return;
+		try {
+			const res = await fetch('/api/settings/google/unlink', { method: 'POST' });
+			if (!res.ok) {
+				toast.error('Failed to unlink Google account');
+				return;
+			}
+			googleLinked = false;
+			googleEmail = '';
+			toast.success('Google account unlinked');
+		} catch (e) {
+			toast.error('Failed to unlink Google account');
+		}
+	}
 
 	$effect(() => {
 		if ($USER_DATA?.settings) {
@@ -294,6 +375,69 @@
 					</Button>
 				</Card.Content>
 			</Card.Root>
+
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Recovery Email</Card.Title>
+					<Card.Description>Account recovery and password reset</Card.Description>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					<div class="space-y-2">
+						<Label for="recovery-email">Recovery Email</Label>
+						<p class="text-muted-foreground text-sm">
+							Used to send password reset links when you forget your password.
+						</p>
+						<Input
+							id="recovery-email"
+							type="email"
+							placeholder="your.other@email.com"
+							bind:value={recoveryEmail}
+							disabled={recoveryLoading}
+						/>
+					</div>
+					<div class="flex gap-2">
+						<Button onclick={handleSaveRecovery} disabled={recoveryLoading || recoverySaving}>
+							{recoverySaving ? 'Saving...' : 'Save recovery email'}
+						</Button>
+					</div>
+				</Card.Content>
+			</Card.Root>
+
+			{#if googleEnabled || googleLinked}
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Google Account</Card.Title>
+						<Card.Description>Sign in with Google or link it to your account</Card.Description>
+					</Card.Header>
+					<Card.Content>
+						<div class="rounded-lg border p-4">
+							{#if googleLinked}
+								<div class="flex items-center justify-between gap-4">
+									<div class="min-w-0">
+										<p class="font-medium">Linked: {googleEmail || 'Google account'}</p>
+										<p class="text-muted-foreground text-sm">
+											You can sign in with Google, and recover your account via its email address.
+										</p>
+									</div>
+									<Button variant="outline" size="sm" onclick={handleUnlinkGoogle}>
+										Unlink
+									</Button>
+								</div>
+							{:else if googleEnabled}
+								<div class="flex items-center justify-between gap-4">
+									<div class="min-w-0">
+										<p class="font-medium">Link a Google account</p>
+										<p class="text-muted-foreground text-sm">
+											Sign in with Google and use its email as your recovery address.
+										</p>
+									</div>
+									<Button href="/auth/google/link" size="sm">Link Google</Button>
+								</div>
+							{/if}
+						</div>
+					</Card.Content>
+				</Card.Root>
+			{/if}
 
 			<Card.Root>
 				<Card.Header>

@@ -7,11 +7,40 @@
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
     import { AlertCircle } from 'lucide-svelte';
+    import { onMount } from 'svelte';
+    import { page } from '$app/state';
+    import { toast } from 'svelte-sonner';
 
     let { form }: { form: ActionData } = $props();
     let username = $state('');
     let password = $state('');
     let isSubmitting = $state(false);
+    let googleEnabled = $state(false);
+
+    const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
+        google_disabled: 'Google sign-in is not configured yet.',
+        google_cancelled: 'Google sign-in was cancelled or failed.',
+        google_expired: 'That sign-in attempt expired. Please try again.',
+        google_already_linked: 'This Google account is linked to another Darkian Mail user.',
+        please_login: 'Please sign in first to link your Google account.',
+        banned: 'This account is banned.'
+    };
+
+    onMount(async () => {
+        const error = page.url.searchParams.get('error');
+        if (error && GOOGLE_ERROR_MESSAGES[error]) {
+            toast.error(GOOGLE_ERROR_MESSAGES[error]);
+        }
+        try {
+            const res = await fetch('/auth/google/status').catch(() => null);
+            if (res?.ok) {
+                const data = await res.json();
+                googleEnabled = !!data.enabled;
+            }
+        } catch (e) {
+            // ignore, hide Google button
+        }
+    });
 
     function handleSubmit() {
         if (!username || !password) {
@@ -83,10 +112,29 @@
                     <Button type="submit" class="w-full" disabled={isSubmitting}>
                         {isSubmitting ? 'Signing in...' : 'Sign in'}
                     </Button>
-                    <div class="mt-4 text-center text-sm">
-                        Don't have an account?
-                        <a href="/signup" class="underline"> Create one </a>
+
+                    <div class="flex items-center justify-between text-sm">
+                        <a href="/forgot-password" class="text-muted-foreground underline-offset-4 hover:underline">
+                            Forgot password?
+                        </a>
+                        <a href="/signup" class="text-muted-foreground underline-offset-4 hover:underline">
+                            Create account
+                        </a>
                     </div>
+
+                    {#if googleEnabled}
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <span class="w-full border-t" />
+                            </div>
+                            <div class="relative flex justify-center text-xs uppercase">
+                                <span class="bg-background text-muted-foreground px-2">or</span>
+                            </div>
+                        </div>
+                        <Button href="/auth/google/login" variant="outline" class="w-full">
+                            Continue with Google
+                        </Button>
+                    {/if}
                 </div>
             </form>
         </CardContent>
